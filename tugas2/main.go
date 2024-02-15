@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -67,37 +68,29 @@ func lanjutNIK(a string, jml int) []string {
 	return results
 }
 
+func generateStudentGroups(taAdmin, tahunAjaran []int) map[int][]string {
+	mapAdminIkhawan := make(map[int][]string)
+	mapSantriIkhwan := make(map[int][]string)
+	mapKelompok := make(map[int][]string)
+
+	for _, thnAdm := range taAdmin {
+		listNIkadmin := generatorNIK("male", thnAdm, 1)
+		mapAdminIkhawan[thnAdm] = listNIkadmin
+	}
+
+	for _, thnA := range tahunAjaran {
+		listNIKIkh := generatorNIK("male", thnA, 5)
+		nikAdm := mapAdminIkhawan[thnA-1]
+		mapSantriIkhwan[thnA] = listNIKIkh
+		mapSantriIkhwan[thnA] = append(mapSantriIkhwan[thnA], nikAdm...)
+		sort.Strings(mapSantriIkhwan[thnA])
+		mapKelompok[thnA] = mapSantriIkhwan[thnA]
+	}
+
+	return mapKelompok
+}
+
 func main() {
-	//reader := bufio.NewReader(os.Stdin)
-	//fmt.Println("Gender:")
-	//input, _ := reader.ReadString('\n')
-	//fmt.Println("your text:", input)
-	//
-	//fmt.Println("Input Tahun:")
-	//inputTahun, _ := reader.ReadString('\n')
-	//inputTahun = strings.TrimSpace(inputTahun)
-	//tahun, err := strconv.Atoi(inputTahun)
-	//if err != nil {
-	//	fmt.Println("Error!", err)
-	//	return
-	//}
-	//fmt.Printf("Tahun anda: %d\n", tahun)
-	//
-	//fmt.Println("Jumlah yang digenerate:")
-	//jmlInput, _ := reader.ReadString('\n')
-	//// Remove newline character and convert to int
-	//jmlInput = strings.TrimSpace(jmlInput)
-	//jml, err := strconv.Atoi(jmlInput)
-	//if err != nil {
-	//	fmt.Println("Invalid input for jumlah:", err)
-	//	return
-	//}
-	//fmt.Printf("Jumlah: %d\n", jml)
-	//
-	//now := time.Now()
-	//month := now.Month()
-	//
-	//fmt.Println(month)
 	fmt.Println("Tugas 2 Nomor 1 : Generator NIK")
 	daftarNIK := generatorNIK("male", 2024, 2)
 	for i := 0; i < len(daftarNIK); i++ {
@@ -110,4 +103,13 @@ func main() {
 		fmt.Println(daftarBaruNIK[i])
 	}
 
+	//
+	//
+	fmt.Println("Tugas 2 Nomor 3 ")
+
+	tahunAjaran := [6]int{2019, 2020, 2021, 2022, 2023, 2024}
+	taAdmin := [6]int{2018, 2019, 2020, 2021, 2022, 2023}
+
+	allKelompok := generateStudentGroups(taAdmin[:], tahunAjaran[:])
+	fmt.Println(allKelompok)
 }
